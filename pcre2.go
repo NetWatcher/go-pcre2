@@ -33,6 +33,11 @@ import (
 	"unsafe"
 )
 
+const (
+	// To be added
+	CASELESS uint32 = 0x00000008,
+)
+
 // Error returns the string representation of the error.
 func (e ErrCompile) Error() string {
 	return fmt.Sprintf("PCRE2 compilation failed at offset %d: %s", e.offset, e.message)
@@ -70,7 +75,7 @@ func bytesToRuneArray(b []byte) ([]rune, []int, error) {
 
 // Compile takes the input string and creates a compiled Regexp object.
 // Regexp objects created by Compile must be released by calling Free
-func Compile(pattern string) (*Regexp, error) {
+func Compile(pattern string, flags uint32) (*Regexp, error) {
 	patc, _, err := strToRuneArray(pattern)
 	if err != nil {
 		return nil, err
@@ -81,7 +86,7 @@ func Compile(pattern string) (*Regexp, error) {
 	re := C.pcre2_compile(
 		(C.PCRE2_SPTR)(unsafe.Pointer(&patc[0])),
 		C.size_t(len(patc)),
-		0,
+		flags,
 		&errnum,
 		&erroff,
 		nil,
