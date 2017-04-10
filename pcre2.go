@@ -86,7 +86,7 @@ func Compile(pattern string, flags uint32) (*Regexp, error) {
     re := C.pcre2_compile(
         (C.PCRE2_SPTR)(unsafe.Pointer(&patc[0])),
         C.size_t(len(patc)),
-        flags,
+        C.uint32_t(flags),
         &errnum,
         &erroff,
         nil,
@@ -110,8 +110,8 @@ func Compile(pattern string, flags uint32) (*Regexp, error) {
 
 // MustCompile is like Compile but panics if the expression cannot be
 // parsed.
-func MustCompile(pattern string) *Regexp {
-    r, err := Compile(pattern)
+func MustCompile(pattern string, flags uint32) *Regexp {
+    r, err := Compile(pattern, flags)
     if err != nil {
         panic(err)
     }
